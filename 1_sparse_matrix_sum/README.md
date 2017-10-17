@@ -1,7 +1,7 @@
 # Sparse Matrix Sum
 ### Problem
 Get the sum of sparse matrices using "Sparse Matrix Representation Method #2".  
-### What is "Sparse Matrix Representation Method #2"? **  
+### What is "Sparse Matrix Representation Method #2"? 
 Saving elements which are not 0.  
 
 Pros
