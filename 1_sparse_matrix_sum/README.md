@@ -8,4 +8,4 @@ Pros
 - In case of sparse matrices, It saves our memory.
 
 Cons
-- Implementation of matrix operations are going to be hard.
+- Implementation of matrix operations is going to be hard.
