@@ -2,17 +2,17 @@
 #include <stdlib.h>
 #define SIZE 10
 typedef int element;
+typedef struct TreeNode { // 트리 노드
+	element data;
+	struct TreeNode *left, *right;
+} TreeNode;
+TreeNode *n[SIZE]; // 트리 노드들의 주소들을 저장할 포인터 배열
 typedef struct Queue { // 배열 큐
 	TreeNode *data;
 	int front, rear;
 	int maxsize;
 	int size;
 } Queue;
-typedef struct TreeNode { // 트리 노드
-	element data;
-	struct TreeNode *left, *right;
-} TreeNode;
-TreeNode *n[SIZE]; // 트리 노드들의 주소들을 저장할 포인터 배열
 
 void queue_init(Queue *q, int sz); int queue_size(Queue *q); int queue_front(Queue *q);
 int queue_empty(Queue *q); int queue_full(Queue *q);
@@ -52,6 +52,8 @@ TreeNode *min(TreeNode *root){
 }
 
 void level_traversal(TreeNode *root){
+	TreeNode *current = root;
 	Queue q; queue_init(&q, SIZE);
-	queue_push(&q, 
+	queue_push(&q, *current);
+	
 }
