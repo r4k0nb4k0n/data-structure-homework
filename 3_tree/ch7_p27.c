@@ -50,11 +50,31 @@ int main(void){
 }
 
 TreeNode *max(TreeNode *root){
-	
+	TreeNode *ret = root;
+	Queue q; queue_init(&q, SIZE);
+	queue_push(&q, *root);
+	while(queue_size(&q)){
+		TreeNode *now = queue_front(&q);
+		queue_pop(&q);
+		ret = ( (ret->data) < (now->data) ) ? now : ret; // 최대값 갖는 노드의 주소 갱신
+		if(now->left != NULL) queue_push(&q, now->left);
+		if(now->right != NULL) queue_push(&q, now->right);
+	}
+	return ret;
 }
 
 TreeNode *min(TreeNode *root){
-
+	TreeNode *ret = NULL;
+	Queue q; queue_init(&q, SIZE);
+	queue_push(&q, *root);
+	while(queue_size(&q)){
+		TreeNode *now = queue_front(&q);
+		queue_pop(&q);
+		ret = ( (ret->data) > (now->data) ) ? now : ret; // 최소값 갖는 노드의 주소 갱신
+		if(now->left != NULL) queue_push(&q, now->left);
+		if(now->right != NULL) queue_push(&q, now->right);
+	}
+	return ret;
 }
 
 void level_traversal(TreeNode *root){
