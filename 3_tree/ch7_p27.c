@@ -17,20 +17,20 @@ typedef struct Queue { // 배열 큐
 
 void queue_init(Queue *q, int sz); int queue_size(Queue *q); int queue_front(Queue *q);
 int queue_empty(Queue *q); int queue_full(Queue *q);
-void queue_enqueue(Queue *q, element val); void queue_dequeue(Queue *q);
+void queue_enqueue(Queue *q, TreeNode *val); void queue_dequeue(Queue *q);
 TreeNode *tree_init(void){ // 과제에 주어진 트리대로 초기화 후 해당 트리의 루트 노드 주소 리턴
 	int i;
 	for(i=0;i<SIZE;i++) n[i] = (TreeNode *)malloc(sizeof(TreeNode));
 	*(n[0]) = (TreeNode){ 8, n[1], n[2] };
-	*(n[1]) = { 5, n[3], n[4] };
-	*(n[2]) = { 4, NULL, n[5] };
-	*(n[3]) = { 9, NULL, NULL };
-	*(n[4]) = { 7, n[6], n[7] };
-	*(n[5]) = { 11, n[8], NULL };
-	*(n[6]) = { 1, NULL, NULL };
-	*(n[7]) = { 12, n[9], NULL };
-	*(n[8]) = { 3, NULL, NULL };
-	*(n[9]) = { 2, NULL, NULL };
+	*(n[1]) = (TreeNode){ 5, n[3], n[4] };
+	*(n[2]) = (TreeNode){ 4, NULL, n[5] };
+	*(n[3]) = (TreeNode){ 9, NULL, NULL };
+	*(n[4]) = (TreeNode){ 7, n[6], n[7] };
+	*(n[5]) = (TreeNode){ 11, n[8], NULL };
+	*(n[6]) = (TreeNode){ 1, NULL, NULL };
+	*(n[7]) = (TreeNode){ 12, n[9], NULL };
+	*(n[8]) = (TreeNode){ 3, NULL, NULL };
+	*(n[9]) = (TreeNode){ 2, NULL, NULL };
 	return n[0]; // 트리의 루트 노드 주소 리턴
 }
 void tree_deinit(void){
@@ -55,7 +55,7 @@ void queue_init(Queue *q,int sz) {
     q->front = 0;
     q->rear = 0;
     q->size = 0;
-    q->data = (element *)malloc(q->maxsize * sizeof(element));
+    q->data = (TreeNode *)malloc(q->maxsize * sizeof(TreeNode));
 }
 int queue_size(Queue *q) {
     return q->size;
@@ -66,7 +66,7 @@ int queue_empty(Queue *q) {
 int queue_full(Queue *q) {
     return q->size == q->maxsize;
 }
-void queue_enqueue(Queue *q, element val) {
+void queue_enqueue(Queue *q, TreeNode *val) {
     assert(!queue_full(q));
     q->data[q->rear] = val;
     q->rear = (q->rear + 1) % q->maxsize;
@@ -77,7 +77,7 @@ void queue_dequeue(Queue *q) {
     q->front = (q->front + 1) % q->maxsize;
     q->size--;
 }
-element queue_front(Queue *q) {
+TreeNode *queue_front(Queue *q) {
     assert(!queue_empty(q));
     return q->data[q->front];
 }
