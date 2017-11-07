@@ -18,6 +18,7 @@ void queue_init(Queue *q, int sz); int queue_size(Queue *q); int queue_front(Que
 int queue_empty(Queue *q); int queue_full(Queue *q);
 void queue_enqueue(Queue *q, element val); void queue_dequeue(Queue *q);
 TreeNode *tree_init(void){ // 과제에 주어진 트리대로 초기화 후 해당 트리의 루트 노드 주소 리턴
+	int i;
 	for(i=0;i<SIZE;i++) n[i] = (TreeNode *)malloc(sizeof(TreeNode));
 	*(n[0]) = { 8, n[1], n[2] };
 	*(n[1]) = { 5, n[3], n[4] };
@@ -31,6 +32,10 @@ TreeNode *tree_init(void){ // 과제에 주어진 트리대로 초기화 후 해
 	*(n[9]) = { 2, NULL, NULL };
 	return n[0]; // 트리의 루트 노드 주소 리턴
 }
+void tree_deinit(void){
+	int i;
+	for(i=0;i<size;i++) free(n[i]);
+}
 TreeNode *max(TreeNode *root);
 TreeNode *min(TreeNode *root);
 void level_traversal(TreeNode *root);
@@ -40,6 +45,7 @@ int main(void){
 	printf("Max element of the tree is %d\n", max(root)->data);
 	printf("Min element of the tree is %d\n", min(root)->data);
 	printf("Level Traversal of the tree => "); level_traversal(root);
+	tree_deinit();	
 	return 0;
 }
 
@@ -52,8 +58,13 @@ TreeNode *min(TreeNode *root){
 }
 
 void level_traversal(TreeNode *root){
-	TreeNode *current = root;
 	Queue q; queue_init(&q, SIZE);
-	queue_push(&q, *current);
-	
+	queue_push(&q, *root);
+	while(queue_size(&q)){
+		TreeNode *now = queue_front(&q);
+		queue_pop(&q);
+		printf("%d ", now->data);
+		if(now->left != NULL) queue_push(&q, now->left);
+		if(now->right != NULL) queue_push(&q, now->right);
+	}	
 }
