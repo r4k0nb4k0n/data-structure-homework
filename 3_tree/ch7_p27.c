@@ -9,16 +9,6 @@ typedef struct TreeNode {
 TreeNode *n[SIZE];
 
 TreeNode *init(void){
-	
-}
-TreeNode max(TreeNode *root);
-TreeNode min(TreeNode *root);
-TreeNode level_traversal(TreeNode *root);
-
-int main(void){
-	TreeNode *n[SIZE], ;
-	int i;
-
 	for(i=0;i<SIZE;i++) n[i] = (TreeNode *)malloc(sizeof(TreeNode));
 	*(n[0]) = { 8, n[1], n[2] };
 	*(n[1]) = { 5, n[3], n[4] };
@@ -30,4 +20,15 @@ int main(void){
 	*(n[7]) = { 12, n[9], NULL };
 	*(n[8]) = { 3, NULL, NULL };
 	*(n[9]) = { 2, NULL, NULL };
+	return n[0]; // 트리의 루트 노드 주소 리턴
+}
+TreeNode max(TreeNode *root);
+TreeNode min(TreeNode *root);
+TreeNode level_traversal(TreeNode *root);
+
+int main(void){
+	TreeNode *root = init(); // 트리 초기화
+	int i;
+
+}
 
