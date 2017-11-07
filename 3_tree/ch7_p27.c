@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #define SIZE 10
 typedef int element;
 typedef struct TreeNode { // 트리 노드
@@ -20,7 +21,7 @@ void queue_enqueue(Queue *q, element val); void queue_dequeue(Queue *q);
 TreeNode *tree_init(void){ // 과제에 주어진 트리대로 초기화 후 해당 트리의 루트 노드 주소 리턴
 	int i;
 	for(i=0;i<SIZE;i++) n[i] = (TreeNode *)malloc(sizeof(TreeNode));
-	*(n[0]) = { 8, n[1], n[2] };
+	*(n[0]) = (TreeNode){ 8, n[1], n[2] };
 	*(n[1]) = { 5, n[3], n[4] };
 	*(n[2]) = { 4, NULL, n[5] };
 	*(n[3]) = { 9, NULL, NULL };
@@ -34,7 +35,7 @@ TreeNode *tree_init(void){ // 과제에 주어진 트리대로 초기화 후 해
 }
 void tree_deinit(void){
 	int i;
-	for(i=0;i<size;i++) free(n[i]);
+	for(i=0;i<SIZE;i++) free(n[i]);
 }
 TreeNode *max(TreeNode *root);
 TreeNode *min(TreeNode *root);
@@ -47,6 +48,38 @@ int main(void){
 	printf("Level Traversal of the tree => "); level_traversal(root);
 	tree_deinit();	
 	return 0;
+}
+
+void queue_init(Queue *q,int sz) {
+    q->maxsize = sz;
+    q->front = 0;
+    q->rear = 0;
+    q->size = 0;
+    q->data = (element *)malloc(q->maxsize * sizeof(element));
+}
+int queue_size(Queue *q) {
+    return q->size;
+}
+int queue_empty(Queue *q) {
+    return queue_size(q) == 0;
+}
+int queue_full(Queue *q) {
+    return q->size == q->maxsize;
+}
+void queue_enqueue(Queue *q, element val) {
+    assert(!queue_full(q));
+    q->data[q->rear] = val;
+    q->rear = (q->rear + 1) % q->maxsize;
+    q->size++;
+}
+void queue_dequeue(Queue *q) {
+    assert(!queue_empty(q));
+    q->front = (q->front + 1) % q->maxsize;
+    q->size--;
+}
+element queue_front(Queue *q) {
+    assert(!queue_empty(q));
+    return q->data[q->front];
 }
 
 TreeNode *max(TreeNode *root){
