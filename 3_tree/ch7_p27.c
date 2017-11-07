@@ -1,3 +1,8 @@
+/* Binary Tree Chap 7 P.27
+ * 2017-2 Data Structure
+ * Written by Choe Hyeong Jin, Dept. of Computer Science and Engineering, Univ. of Seoul
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
