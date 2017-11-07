@@ -9,13 +9,12 @@ typedef struct TreeNode { // 트리 노드
 } TreeNode;
 TreeNode *n[SIZE]; // 트리 노드들의 주소들을 저장할 포인터 배열
 typedef struct Queue { // 배열 큐
-	TreeNode *data;
+	TreeNode *data[SIZE];
 	int front, rear;
-	int maxsize;
 	int size;
 } Queue;
 
-void queue_init(Queue *q, int sz); int queue_size(Queue *q); int queue_front(Queue *q);
+void queue_init(Queue *q); int queue_size(Queue *q); TreeNode *queue_front(Queue *q);
 int queue_empty(Queue *q); int queue_full(Queue *q);
 void queue_enqueue(Queue *q, TreeNode *val); void queue_dequeue(Queue *q);
 TreeNode *tree_init(void){ // 과제에 주어진 트리대로 초기화 후 해당 트리의 루트 노드 주소 리턴
@@ -50,12 +49,10 @@ int main(void){
 	return 0;
 }
 
-void queue_init(Queue *q,int sz) {
-    q->maxsize = sz;
+void queue_init(Queue *q) {
     q->front = 0;
     q->rear = 0;
     q->size = 0;
-    q->data = (TreeNode *)malloc(q->maxsize * sizeof(TreeNode));
 }
 int queue_size(Queue *q) {
     return q->size;
@@ -64,17 +61,17 @@ int queue_empty(Queue *q) {
     return queue_size(q) == 0;
 }
 int queue_full(Queue *q) {
-    return q->size == q->maxsize;
+    return q->size == SIZE;
 }
 void queue_enqueue(Queue *q, TreeNode *val) {
     assert(!queue_full(q));
     q->data[q->rear] = val;
-    q->rear = (q->rear + 1) % q->maxsize;
+    q->rear = (q->rear + 1) % SIZE;
     q->size++;
 }
 void queue_dequeue(Queue *q) {
     assert(!queue_empty(q));
-    q->front = (q->front + 1) % q->maxsize;
+    q->front = (q->front + 1) % SIZE;
     q->size--;
 }
 TreeNode *queue_front(Queue *q) {
@@ -84,40 +81,41 @@ TreeNode *queue_front(Queue *q) {
 
 TreeNode *max(TreeNode *root){
 	TreeNode *ret = root;
-	Queue q; queue_init(&q, SIZE);
-	queue_push(&q, *root);
+	Queue q; queue_init(&q);
+	queue_enqueue(&q, root);
 	while(queue_size(&q)){
 		TreeNode *now = queue_front(&q);
-		queue_pop(&q);
+		queue_dequeue(&q);
 		ret = ( (ret->data) < (now->data) ) ? now : ret; // 최대값 갖는 노드의 주소 갱신
-		if(now->left != NULL) queue_push(&q, now->left);
-		if(now->right != NULL) queue_push(&q, now->right);
+		if(now->left != NULL) queue_enqueue(&q, now->left);
+		if(now->right != NULL) queue_enqueue(&q, now->right);
 	}
 	return ret;
 }
 
 TreeNode *min(TreeNode *root){
-	TreeNode *ret = NULL;
-	Queue q; queue_init(&q, SIZE);
-	queue_push(&q, *root);
+	TreeNode *ret = root;
+	Queue q; queue_init(&q);
+	queue_enqueue(&q, root);
 	while(queue_size(&q)){
 		TreeNode *now = queue_front(&q);
-		queue_pop(&q);
+		queue_dequeue(&q);
 		ret = ( (ret->data) > (now->data) ) ? now : ret; // 최소값 갖는 노드의 주소 갱신
-		if(now->left != NULL) queue_push(&q, now->left);
-		if(now->right != NULL) queue_push(&q, now->right);
+		if(now->left != NULL) queue_enqueue(&q, now->left);
+		if(now->right != NULL) queue_enqueue(&q, now->right);
 	}
 	return ret;
 }
 
 void level_traversal(TreeNode *root){
-	Queue q; queue_init(&q, SIZE);
-	queue_push(&q, *root);
+	Queue q; queue_init(&q);
+	queue_enqueue(&q, root);
 	while(queue_size(&q)){
 		TreeNode *now = queue_front(&q);
-		queue_pop(&q);
+		queue_dequeue(&q);
 		printf("%d ", now->data);
-		if(now->left != NULL) queue_push(&q, now->left);
-		if(now->right != NULL) queue_push(&q, now->right);
-	}	
+		if(now->left != NULL) queue_enqueue(&q, now->left);
+		if(now->right != NULL) queue_enqueue(&q, now->right);
+	}
+	printf("\n");	
 }
