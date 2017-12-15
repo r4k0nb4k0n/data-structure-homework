@@ -75,9 +75,9 @@ int main(){
 	};
 	int start = 4, end = 0;
 	dijkstra(graph, start);
-  printf("From %s[%d] to %s[%d]\n", cities[start], start, cities[end], end);
-  printf("+ Shortest distance => %d\n", distance[end]);
-  printf("+ Shortest path => %s[%d] ", cities[start], start);
-  print_path(parent, end); printf("\n");
+	printf("From %s[%d] to %s[%d]\n", cities[start], start, cities[end], end);
+	printf("+ Shortest distance => %d\n", distance[end]);
+	printf("+ Shortest path => %s[%d] ", cities[start], start);
+	print_path(parent, end); printf("\n");
 	return 0;
 }
