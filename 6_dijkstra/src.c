@@ -1,72 +1,83 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <limits.h>
-#define MAX_VERTICES 8
-#define TRUE 1
-#define FALSE 0
+// 그래프의 정점 개수 
+#define V 8
+typedef int bool;
+#define true 1
+#define false 0
 
-int weight[MAX_VERTICES][MAX_VERTICES] = {
-  {   0,    0,    0,    0,    0,    0,    0,    0}, 
-  { 300,    0,    0,    0,    0,    0,    0,    0}, 
-  {1000,  800,    0,    0,    0,    0,    0,    0}, 
-  {   0,    0, 1200,    0,    0,    0,    0,    0}, 
-  {   0,    0,    0, 1500,    0,  250,    0,    0}, 
-  {   0,    0,    0, 1000,    0,    0,  900, 1400}, 
-  {   0,    0,    0,    0,    0,    0,    0, 1000}, 
-  {1700,    0,    0,    0,    0,    0,    0,    0}
-}; 
+int distance[V]; // distance[i] : src부터 i까지의 최단 경로의 가중치 합
+bool set[V]; // set[i] : i가 최단 경로 트리에 포함되는지의 여부
+int parent[V]; // 최단 경로 트리를 저장하는 배열
 char *cities[] = {
-  "Los Angeles", "San Francisco", "Denbur", "Chicago", 
+  "Los Angeles", "San Francisco", "Denver", "Chicago", 
   "Boston", "New York", "Miami", "New Orleans"
 };
-int distance[MAX_VERTICES]; // 시작 정점으로부터의 최단 경로 거리
-int found[MAX_VERTICES]; // 방문한 정점 표시
-int parent[MAX_VERTICES];
-// 최단 경로에 포함되지 않은 정점들 중에서 최단 거리를 갖는 정점을 찾는 함수.
-int choose(int distance[], int found[]){
-  int i, min = 0, minpos;
-  for(i=0;i<MAX_VERTICES;i++){
-    if(found[i] == FALSE && distance[i] <= min){
-      min = distance[i], minpos = i;
-    }
-  }
-  return minpos;
+// 최단 경로 트리에 포함되어 있지 않은 정점들 중 
+// 최단인 정점 번호를 반환하는 함수
+int choose(int distance[], bool set[]){
+	// min 초기화
+	int min = INT_MAX, min_index;
+	for (int v = 0; v < V; v++)
+		if (set[v] == false && distance[v] <= min)
+			min = distance[v], min_index = v;
+	return min_index;
 }
-void print_path(int parent[], int j){
-  if(parent[j]==-1) return;
-  print_path(parent, parent[j]);
-  printf("%13s[%d]->", cities[j], j);
+
+// source 정점에서 target 정점까지의 최소 거리 경로 출력하는 함수
+// parent[] 사용
+void print_path(int parent[], int target){
+	// 기저 조건 : target 정점이 source 정점일 때
+	if (parent[target]==-1) return;
+	print_path(parent, parent[target]);
+	printf("%s[%d] ", cities[target], target);
 }
-void print_solution(int src, int distance[], int parent[]){
-  int i;
-  for(i=0;i<MAX_VERTICES;i++){
-    printf("\n%13s[%d]=>%13s[%d] : %4d\n%13s[%d]->", cities[src], src, cities[i], i, distance[i], cities[src], src);
-    print_path(parent, i);
-  }
-}
-// Dijkstra 최단 경로 알고리즘, 인접 행렬 표현 방식의 그래프를 위한 함수.
-void shortest_path(int start){
-  int i, u, w;
-  for(i=0;i<MAX_VERTICES;i++){ // Initialization.
-    parent[i] = -1;
-    distance[i] = INT_MAX/2;
-    found[i] = FALSE;
-  }
-  distance[start] = 0;
-  for(i=0;i<MAX_VERTICES-1;i++){
-    u = choose(distance, found);
-    found[u] = TRUE;
-    for(w=0;w<MAX_VERTICES;w++)
-      if(!found[w] && weight[u][w] != 0 && distance[u]+weight[u][w] < distance[w]){
-        parent[w] = u;
-        distance[w] = distance[u]+weight[u][w];
-      }
-  }
+
+void dijkstra(int graph[V][V], int src){
+	int i;
+	// 초기화
+	for (i = 0; i < V; i++){
+		parent[i] = -1;
+		distance[i] = INT_MAX;
+		set[i] = false;
+	}
+	distance[src] = 0; // src부터 src까지의 최단 경로의 가중치 합은 항상 0이다.
+	// 모든 정점들에 대해 최단 경로를 찾는다.
+	for (int count = 0; count < V-1; count++){
+		// 아직 처리되지 않은 정점들로부터 최단 거리인 정점을 고른다.
+		// u는 항상 처음 반복에서의 src와 같다.
+		int u = choose(distance, set);
+		// 고른 정점을 처리된 것으로(최단 경로 트리에 포함되는 것으로) 표시한다.
+		set[u] = true;
+		// 고른 정점에 인접한 정점들의 거리값을 갱신한다.
+		for (int v = 0; v < V; v++)
+			// 다음과 같은 조건들이 모두 충족되면 distance[v](고른 정점에 인접한 정점들의 거리값)을 갱신한다.
+			// 아직 최단 경로 트리에 포함되지 않는다.
+			// u에서 v로 가는 간선이 있다.
+			// 현재 distance[v]의 값보다 src부터 u를 통과하여 v로 가는 가중치의 합이 더 작다.
+			if (!set[v] && graph[u][v] && distance[u] + graph[u][v] < distance[v]){
+				parent[v] = u;
+				distance[v] = distance[u] + graph[u][v];
+			} 
+	}
 }
 
 int main(){
-  int start = 4;
-  shortest_path(start);
-  print_solution(start, distance, parent);
-  return 0;
+	int graph[V][V] = {
+		{    0,    0,    0,    0,    0,    0,    0,    0},
+		{  300,    0,    0,    0,    0,    0,    0,    0},
+		{ 1000,  800,    0,    0,    0,    0,    0,    0},
+		{    0,    0, 1200,    0,    0,    0,    0,    0},
+		{    0,    0,    0, 1500,    0,  250,    0,    0},
+		{    0,    0,    0, 1000,    0,    0,  900, 1400},
+		{    0,    0,    0,    0,    0,    0,    0, 1000},
+		{ 1700,    0,    0,    0,    0,    0,    0,    0},
+	};
+	int start = 4, end = 0;
+	dijkstra(graph, start);
+  printf("From %s[%d] to %s[%d]\n", cities[start], start, cities[end], end);
+  printf("+ Shortest distance => %d\n", distance[end]);
+  printf("+ Shortest path => %s[%d] ", cities[start], start);
+  print_path(parent, end); printf("\n");
+	return 0;
 }
