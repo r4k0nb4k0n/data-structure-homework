@@ -2,7 +2,6 @@
 #include <limits.h>
 // 그래프의 정점 개수 
 #define V 8
-
 typedef int bool;
 #define true 1
 #define false 0
@@ -29,54 +28,41 @@ void print_path(int parent[], int target){
 	printf("%d ", target);
 }
 
-// Funtion that implements Dijkstra's single source shortest path
-// algorithm for a graph represented using adjacency matrix
-// representation
 void dijkstra(int graph[V][V], int src){
 	int distance[V]; // distance[i] : src부터 i까지의 최단 경로의 가중치 합
-	bool set[V]; // set[i] == true, 정점 i가 최단 경로 트리에 포함되어
+	bool set[V]; // set[i] : i가 최단 경로 트리에 포함되는지의 여부
 	int parent[V]; // 최단 경로 트리를 저장하는 배열
-  int i;
+	int i;
 	// 초기화
-  for (i = 0; i < V; i++){
+	for (i = 0; i < V; i++){
 		parent[i] = -1;
 		distance[i] = INT_MAX;
 		set[i] = false;
 	}
-
 	distance[src] = 0; // src부터 src까지의 최단 경로의 가중치 합은 항상 0이다.
-
 	// 모든 정점들에 대해 최단 경로를 찾는다.
 	for (int count = 0; count < V-1; count++){
-		// Pick the minimum distanceance vertex from the set of
-		// vertices not yet processed. u is always equal to src
-		// in first iteration.
+		// 아직 처리되지 않은 정점들로부터 최단 거리인 정점을 고른다.
+		// u는 항상 처음 반복에서의 src와 같다.
 		int u = choose(distance, set);
-
-		// Mark the picked vertex as processed
+		// 고른 정점을 처리된 것으로(최단 경로 트리에 포함되는 것으로) 표시한다.
 		set[u] = true;
-
-		// Update distance value of the adjacent vertices of the
-		// picked vertex.
+		// 고른 정점에 인접한 정점들의 거리값을 갱신한다.
 		for (int v = 0; v < V; v++)
-
-			// Update distance[v] only if is not in set, there is
-			// an edge from u to v, and total weight of path from
-			// src to v through u is smaller than current value of
-			// distance[v]
-			if (!set[v] && graph[u][v] &&
-				distance[u] + graph[u][v] < distance[v])
-			{
+			// 다음과 같은 조건들이 모두 충족되면 distance[v](고른 정점에 인접한 정점들의 거리값)을 갱신한다.
+			// 아직 최단 경로 트리에 포함되지 않는다.
+			// u에서 v로 가는 간선이 있다.
+			// 현재 distance[v]의 값보다 src부터 u를 통과하여 v로 가는 가중치의 합이 더 작다.
+			if (!set[v] && graph[u][v] && distance[u] + graph[u][v] < distance[v]){
 				parent[v] = u;
 				distance[v] = distance[u] + graph[u][v];
 			} 
 	}
 }
 
-int main()
-{
+int main(){
 	int graph[V][V] = {
-    {    0,    0,    0,    0,    0,    0,    0,    0},
+		{    0,    0,    0,    0,    0,    0,    0,    0},
 		{  300,    0,    0,    0,    0,    0,    0,    0},
 		{ 1000,  800,    0,    0,    0,    0,    0,    0},
 		{    0,    0, 1200,    0,    0,    0,    0,    0},
@@ -85,9 +71,11 @@ int main()
 		{    0,    0,    0,    0,    0,    0,    0, 1000},
 		{ 1700,    0,    0,    0,    0,    0,    0,    0},
 	};
-  int start = 4, end = 0;
+	char *cities[] = {
+		"Los Angeles", "San Francisco", "Denver", "Chicago", "Boston", "New York", "Miami", "New Orleans"	
+	};
+	int start = 4, end = 0;
 	dijkstra(graph, start);
-  print_path(start, end);
+	print_path(start, end);
 	return 0;
 }
-
